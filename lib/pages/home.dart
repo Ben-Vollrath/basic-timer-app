@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:basic_timer_app/services/countdown_timer_service.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _controller = TextEditingController();
 
   void startTimer() {
-    int start = int.parse(_controller.text);
+    int start = int.parse(_current);
     _timerService.start(start, (int current) {
       setState(() {
         _current = current.toString();
@@ -27,17 +28,35 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(),
-      body: Column(
+      body: timer(),
+    );
+  }
+
+  Center timer() {
+    return Center(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          TextField(
-          controller: _controller,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            hintText: 'Enter time in seconds',
+          SleekCircularSlider(
+          min: 0,
+          max: 200,
+          onChange: (double value) {
+            _current = value.toInt().toString();
+          },
+          appearance: CircularSliderAppearance(
+            startAngle: 270,
+            angleRange: 360,
+            size: 200,
+            customWidths: CustomSliderWidths(progressBarWidth: 10, trackWidth: 10, handlerSize: 10),
+            customColors: CustomSliderColors(
+              progressBarColor: Colors.blue,
+              trackColor: Colors.grey,
+              dotColor: Colors.red,
+            ),
           ),
-        ),
-        GestureDetector(
+          innerWidget: (double value) {
+            return Center(
+              child: GestureDetector(
           onTap: () {
             if(_timerService.isRunning()) {
               _timerService.cancel();
@@ -47,21 +66,23 @@ class _HomePageState extends State<HomePage> {
             }
           },
           child: Container(
-            width: 200,
-            height: 200,
+            width: 100,
+            height: 100,
             decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 38, 151, 226),
+              color: Colors.transparent,
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
-                'Timer: $_current',
+                '$_current seconds',
                 textAlign: TextAlign.center,
               ),
             ),
           ),
         ),
-        
+            );
+          }
+          )
         ],
       ),
     );
