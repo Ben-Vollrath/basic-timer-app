@@ -1,2 +1,3 @@
-# basic-timer-app
-A Basic Timer App implemented using Flutter
+# basic_timer_app
+
+A new Flutter project.
