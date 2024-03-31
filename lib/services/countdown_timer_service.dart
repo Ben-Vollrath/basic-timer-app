@@ -13,16 +13,16 @@ class CountdownTimerService {
   }
 
 
-  void start(int start, ValueChanged<int> onTick) {
-    _current = start;
-    const oneSec = Duration(seconds: 1);
+  void start(double start, ValueChanged<double> onTick) {
+    double _current = start;
+    const oneSec = Duration(milliseconds: 100);
     _timer = Timer.periodic(
       oneSec,
       (Timer timer) {
         if (_current < 1) {
           timer.cancel();
         } else {
-          _current = _current - 1;
+          _current = _current - 0.1;
           onTick(_current);
         }
       },
