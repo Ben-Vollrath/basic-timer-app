@@ -109,6 +109,10 @@ class _HomePageState extends State<HomePage> {
       child: Center(
         child: Text(
             '${currentHours.padLeft(2, '0')}:${currentMinutes.padLeft(2, '0')}:${currentSeconds.padLeft(2, '0')}',
+            style: const TextStyle(
+              fontSize: 25,
+              color: Colors.black,
+            ),
           textAlign: TextAlign.center,
         ),
       ),
