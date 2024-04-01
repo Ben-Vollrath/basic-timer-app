@@ -32,7 +32,7 @@ class FillingContainer extends StatelessWidget {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: size * progress,
+              height: size * progress > 0 ? size * progress : 0,
               color: progressColor,
             ),
           )

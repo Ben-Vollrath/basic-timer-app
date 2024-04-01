@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
           initialValue: double.parse(currentSeconds),
           min: 0,
           max: 60,
-          onChange: (double value) {
+          onChange: (double value)  {
             currentSeconds = value.floor().toString();
           },
           appearance: slider_appearance01,
@@ -114,7 +114,14 @@ class _HomePageState extends State<HomePage> {
         });
       }
       else{
-        
+        fillTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
+        if (fillValue.value > 0) {
+          fillValue.value -= 0.01;
+        } else {
+          timer.cancel();
+          timerService.cancel();
+        }
+        });
       }
     },
     onTapUp: (details){
@@ -122,6 +129,9 @@ class _HomePageState extends State<HomePage> {
 
       if(!timerService.isRunning()){
         fillValue.value = 0;
+      }
+      else{
+        fillValue.value = 1;
       }
     },
     child: ValueListenableBuilder(
