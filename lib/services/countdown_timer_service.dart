@@ -15,14 +15,14 @@ class CountdownTimerService {
 
   void start(double start, ValueChanged<double> onTick) {
     double _current = start;
-    const oneSec = Duration(milliseconds: 100);
+    const tenMillisecond = Duration(milliseconds: 10);
     _timer = Timer.periodic(
-      oneSec,
+      tenMillisecond,
       (Timer timer) {
-        if (_current < 1) {
+        if (_current < 0.01) {
           timer.cancel();
         } else {
-          _current = _current - 0.1;
+          _current = _current - 0.01;
           onTick(_current);
         }
       },
