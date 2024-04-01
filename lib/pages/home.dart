@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: prefer_const_constructors
 
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
-import 'package:basic_timer_app/utils.dart';
 import 'package:basic_timer_app/services/countdown_timer_service.dart';
 import 'package:basic_timer_app/styling/slider_style.dart';
+import 'package:basic_timer_app/widgets/filling_container.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,9 +18,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final CountdownTimerService timerService = CountdownTimerService();
+
+  ValueNotifier<double> fillValue = ValueNotifier(0); 
+
   String currentSeconds = '00';
   String currentMinutes = '00';
   String currentHours = '00';
+
+  Timer? fillTimer;
 
   final TextEditingController _controller = TextEditingController();
 
@@ -36,6 +44,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: timer(),
     );
   }
@@ -74,8 +83,9 @@ class _HomePageState extends State<HomePage> {
                         currentHours = value.floor().toString();
                       },
                       appearance: slider_appearance03,
-                      innerWidget: (double Value) {
-                        return Center(
+                      innerWidget: (double value) {
+                        return Container(
+                        padding: EdgeInsets.all(18),
                         child: detectStartTimer(),
                       );
                       }
@@ -91,31 +101,49 @@ class _HomePageState extends State<HomePage> {
   }
   GestureDetector detectStartTimer() {
     return GestureDetector(
-    onTap: () {
-      if(timerService.isRunning()) {
-        timerService.cancel();
+    onTapDown: (details) {
+      if(!timerService.isRunning()){
+        fillTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
+        if (fillValue.value < 1) {
+          fillValue.value += 0.01;
+        } else {
+          timer.cancel();
+          
+          startTimer(double.parse(currentHours), double.parse(currentMinutes), double.parse(currentSeconds));
+        }
+        });
       }
-      else {
-        startTimer(double.parse(currentHours), double.parse(currentMinutes), double.parse(currentSeconds));
+      else{
+        
       }
     },
-    child: Container(
-      width: 100,
-      height: 100,
-      decoration: const BoxDecoration(
-        color: Colors.transparent,
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: Text(
-            '${currentHours.padLeft(2, '0')}:${currentMinutes.padLeft(2, '0')}:${currentSeconds.padLeft(2, '0')}',
-            style: const TextStyle(
-              fontSize: 25,
-              color: Colors.black,
+    onTapUp: (details){
+      fillTimer?.cancel();
+
+      if(!timerService.isRunning()){
+        fillValue.value = 0;
+      }
+    },
+    child: ValueListenableBuilder(
+      valueListenable: fillValue,
+      builder: (context, value, child) {
+        return FillingContainer(
+          progress: value,
+          size: 210,
+          backgroundColor: Colors.white,
+          progressColor: customColors03.trackColor!,
+          child: Center(
+            child: Text(
+                '${currentHours.padLeft(2, '0')}:${currentMinutes.padLeft(2, '0')}:${currentSeconds.padLeft(2, '0')}',
+                style: const TextStyle(
+                  fontSize: 25,
+                  color: Colors.black,
+                ),
+              textAlign: TextAlign.center,
             ),
-          textAlign: TextAlign.center,
-        ),
-      ),
+          ),
+        );
+      }
     ),
             );
   }

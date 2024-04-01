@@ -18,7 +18,7 @@ final CircularSliderAppearance slider_appearance01 = CircularSliderAppearance(
     animationEnabled: false,
     startAngle: 270,
     angleRange: 360,
-    size: 350.0,);
+    size: 370.0,);
 
 final customWidth02 =
     CustomSliderWidths(trackWidth: 5, progressBarWidth: 15, shadowWidth: 30);
