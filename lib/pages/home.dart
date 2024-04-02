@@ -25,7 +25,8 @@ class _HomePageState extends State<HomePage> {
   String currentMinutes = '00';
   String currentHours = '00';
 
-  Timer? fillTimer;
+  Timer? holdFillTimer;
+  Timer? fillBackTimer;
 
   final TextEditingController _controller = TextEditingController();
 
@@ -102,8 +103,9 @@ class _HomePageState extends State<HomePage> {
   GestureDetector detectStartTimer() {
     return GestureDetector(
     onTapDown: (details) {
+      fillBackTimer?.cancel();
       if(!timerService.isRunning()){
-        fillTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
+        holdFillTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
         if (fillValue.value < 1) {
           fillValue.value += 0.01;
         } else {
@@ -114,7 +116,7 @@ class _HomePageState extends State<HomePage> {
         });
       }
       else{
-        fillTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
+        holdFillTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
         if (fillValue.value > 0) {
           fillValue.value -= 0.01;
         } else {
@@ -125,14 +127,28 @@ class _HomePageState extends State<HomePage> {
       }
     },
     onTapUp: (details){
-      fillTimer?.cancel();
+      holdFillTimer?.cancel();
 
-      if(!timerService.isRunning()){
-        fillValue.value = 0;
-      }
-      else{
-        fillValue.value = 1;
-      }
+      fillBackTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
+        if(timerService.isRunning()){
+          if (fillValue.value < 1) {
+            fillValue.value += 0.005;
+          } 
+          else {
+            timer.cancel();
+          }
+        }
+        else{
+        if (fillValue.value > 0) {
+          fillValue.value -= 0.005;
+        } 
+        else {
+          timer.cancel();
+          timerService.cancel();
+        }
+          
+        }
+      });
     },
     child: ValueListenableBuilder(
       valueListenable: fillValue,
