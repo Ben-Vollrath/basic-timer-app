@@ -28,8 +28,6 @@ class _HomePageState extends State<HomePage> {
   Timer? holdFillTimer;
   Timer? fillBackTimer;
 
-  final TextEditingController _controller = TextEditingController();
-
   void startTimer(double hours, double minutes, double seconds) {
     double totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
     timerService.start(totalSeconds, (double current) {
