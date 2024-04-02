@@ -39,6 +39,19 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void resetTimerAnimation(){
+    Timer.periodic(const Duration(microseconds: 100), (timer) {
+        if(currentHours <= 0 && currentMinutes <= 0 && currentSeconds <= 0){
+          timer.cancel();
+        }
+        setState(() {
+        currentHours = currentHours - currentHours*0.01 >= 0 ? currentHours - currentHours*0.01 : 0;
+        currentMinutes = currentMinutes - currentMinutes*0.01 >= 0 ? currentMinutes - currentMinutes*0.01 : 0;
+        currentSeconds =  currentSeconds - currentSeconds*0.01 >= 0 ? currentSeconds - currentSeconds*0.01 : 0;
+      });
+  });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +133,8 @@ class _HomePageState extends State<HomePage> {
         } else {
           timer.cancel();
           timerService.cancel();
+
+          resetTimerAnimation();
         }
         });
       }
