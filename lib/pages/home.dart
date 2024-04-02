@@ -29,12 +29,12 @@ class _HomePageState extends State<HomePage> {
   Timer? fillBackTimer;
 
   void startTimer(double hours, double minutes, double seconds) {
-    double totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
-    timerService.start(totalSeconds, (double current) {
+    
+    timerService.start(hours, minutes, seconds, (TimerValues currentValues) {
       setState(() {
-        currentHours = (current / 3600);
-        currentMinutes = ((current % 3600) / 60);
-        currentSeconds = (current % 60);
+        currentHours = currentValues.hours;
+        currentMinutes = currentValues.minutes;
+        currentSeconds =  currentValues.seconds;
       });
     });
   }
@@ -127,26 +127,7 @@ class _HomePageState extends State<HomePage> {
     onTapUp: (details){
       holdFillTimer?.cancel();
 
-      fillBackTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
-        if(timerService.isRunning()){
-          if (fillValue.value < 1) {
-            fillValue.value += 0.005;
-          } 
-          else {
-            timer.cancel();
-          }
-        }
-        else{
-        if (fillValue.value > 0) {
-          fillValue.value -= 0.005;
-        } 
-        else {
-          timer.cancel();
-          timerService.cancel();
-        }
-          
-        }
-      });
+      fillTimerAnimation();
     },
     child: ValueListenableBuilder(
       valueListenable: fillValue,
@@ -170,6 +151,29 @@ class _HomePageState extends State<HomePage> {
       }
     ),
             );
+  }
+
+  void fillTimerAnimation() {
+    fillBackTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
+      if(timerService.isRunning()){
+        if (fillValue.value < 1) {
+          fillValue.value += 0.005;
+        } 
+        else {
+          timer.cancel();
+        }
+      }
+      else{
+      if (fillValue.value > 0) {
+        fillValue.value -= 0.005;
+      } 
+      else {
+        timer.cancel();
+        timerService.cancel();
+      }
+        
+      }
+    });
   }
 
   @override

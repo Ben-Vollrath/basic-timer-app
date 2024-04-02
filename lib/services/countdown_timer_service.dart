@@ -1,6 +1,14 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart'; // Import the package that contains the ValueChanged class.
 
+  class TimerValues {
+    final double hours;
+    final double minutes;
+    final double seconds;
+
+    TimerValues(this.hours, this.minutes, this.seconds);
+  }
+
 
 class CountdownTimerService {
   Timer _timer;
@@ -13,17 +21,35 @@ class CountdownTimerService {
   }
 
 
-  void start(double start, ValueChanged<double> onTick) {
-    double current = start;
-    const tenMillisecond = Duration(milliseconds: 10);
+  void start(double hours, double minutes, double seconds, ValueChanged<TimerValues> onTick) {
     _timer = Timer.periodic(
-      tenMillisecond,
+      Duration(milliseconds: 10),
       (Timer timer) {
-        if (current < 0.01) {
+        
+        if (hours <= 0 && minutes <= 0 && seconds <= 0) {
           timer.cancel();
         } else {
-          current = current - 0.01;
-          onTick(current);
+          if(seconds - 0.01 >= 0){
+            seconds -= 0.01;
+          }
+          else{
+            seconds = 60.00;
+            if(minutes - 1 >= 0){
+              minutes -= 1;
+            }
+            else{
+              minutes = 60;
+              if(hours - 1 >= 0){
+                hours -= 1;
+              }
+              else{
+                hours = 0;
+              }
+            }
+          }
+
+          onTick(TimerValues(hours, minutes, seconds));
+
         }
       },
     );
