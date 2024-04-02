@@ -21,9 +21,9 @@ class _HomePageState extends State<HomePage> {
 
   ValueNotifier<double> fillValue = ValueNotifier(0); 
 
-  String currentSeconds = '00';
-  String currentMinutes = '00';
-  String currentHours = '00';
+  double currentSeconds = 00;
+  double currentMinutes = 00;
+  double currentHours = 00;
 
   Timer? holdFillTimer;
   Timer? fillBackTimer;
@@ -34,9 +34,9 @@ class _HomePageState extends State<HomePage> {
     double totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
     timerService.start(totalSeconds, (double current) {
       setState(() {
-        currentHours = (current ~/ 3600).toString().padLeft(2, '0');
-        currentMinutes = ((current % 3600) ~/ 60).toString().padLeft(2, '0');
-        currentSeconds = (current % 60).toString().padLeft(2, '0');
+        currentHours = (current / 3600);
+        currentMinutes = ((current % 3600) / 60);
+        currentSeconds = (current % 60);
       });
     });
   }
@@ -55,33 +55,33 @@ class _HomePageState extends State<HomePage> {
       child: Align(
         alignment: Alignment.center,
         child: SleekCircularSlider(
-          initialValue: double.parse(currentSeconds),
+          initialValue: currentSeconds,
           min: 0,
           max: 60,
           onChange: (double value)  {
-            currentSeconds = value.floor().toString();
+            currentSeconds = value;
           },
           appearance: slider_appearance01,
           innerWidget: (double value){
             return Align(
               alignment: Alignment.center,
               child: SleekCircularSlider(
-                initialValue: double.parse(currentMinutes),
+                initialValue: currentMinutes,
                 min: 0,
                 max: 60,
                 onChange: (double value) {
-                  currentMinutes = value.floor().toString();
+                  currentMinutes = value;
                 },
                 appearance: slider_appearance02,
                 innerWidget: (double value) {
                   return Align(
                     alignment: Alignment.center,
                     child: SleekCircularSlider(
-                      initialValue: double.parse(currentHours),
+                      initialValue: currentHours,
                       min: 0,
                       max: 24,
                       onChange: (double value) {
-                        currentHours = value.floor().toString();
+                        currentHours = value;
                       },
                       appearance: slider_appearance03,
                       innerWidget: (double value) {
@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
         } else {
           timer.cancel();
           
-          startTimer(double.parse(currentHours), double.parse(currentMinutes), double.parse(currentSeconds));
+          startTimer(currentHours, currentMinutes, currentSeconds);
         }
         });
       }
@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> {
           progressColor: customColors03.trackColor!,
           child: Center(
             child: Text(
-                '${currentHours.padLeft(2, '0')}:${currentMinutes.padLeft(2, '0')}:${currentSeconds.padLeft(2, '0')}',
+                '${currentHours.floor().toString().padLeft(2, '0')}:${currentMinutes.floor().toString().padLeft(2, '0')}:${currentSeconds.floor().toString().padLeft(2, '0')}',
                 style: const TextStyle(
                   fontSize: 25,
                   color: Colors.black,
