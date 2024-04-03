@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import 'package:basic_timer_app/services/countdown_timer_service.dart';
@@ -25,13 +27,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   late AnimationController fillBackController;
   late Animation<double> fillBackAnimation;
 
+  late AnimationController resetTimerController;
+  late Animation<double>resetTimerAnimation;
+
   ValueNotifier<double> fillValue = ValueNotifier<double>(0.0);
 
   @override
   void initState() {
     super.initState();
     fillController = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 1250),
       vsync: this,
     )..addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -42,44 +47,63 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       else if(status == AnimationStatus.dismissed){
         if(timerService.isRunning()){
           timerService.cancel();
-          resetTimerAnimation();
+          playResetTimerAnimation();
         }
       }
     });
-
-    fillAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(fillController)..addListener(() {
+    CurvedAnimation curveFillAnimation = CurvedAnimation(parent: fillController, curve: Curves.easeInOut);
+    fillAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(curveFillAnimation)..addListener(() {
       fillValue.value = fillAnimation.value;
     });
 
     fillBackController = AnimationController(
-      duration: const Duration(seconds: 4),
+      duration: const Duration(seconds: 10),
       vsync: this,
     );
 
-    fillBackAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(fillBackController)..addListener(() {
+    CurvedAnimation curveFillBackAnimation = CurvedAnimation(parent: fillBackController, curve: Curves.easeInOut);
+    fillBackAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(curveFillBackAnimation)..addListener(() {
       fillValue.value = fillBackAnimation.value;
     });
 
+    resetTimerController = AnimationController(
+      duration: const Duration(milliseconds: 1250),
+      vsync: this,
+    );
+
+    CurvedAnimation curveResetTimerAnimation = CurvedAnimation(parent: resetTimerController, curve: Curves.easeInOut);
+    resetTimerAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(curveResetTimerAnimation)..addListener(() {
+        currentSeconds.value = initialSeconds*resetTimerAnimation.value;
+        currentMinutes.value = initialMinutes*resetTimerAnimation.value;
+        currentHours.value = initialHours*resetTimerAnimation.value;
+    });
+
   }
 
+  double selectedSeconds = 00;
+  double selectedMinutes = 00;
+  double selectedHours = 00;
 
-  double currentSeconds = 00;
-  double currentMinutes = 00;
-  double currentHours = 00;
+  double initialSeconds = 00;
+  double initialMinutes = 00;
+  double initialHours = 00;
+
+  ValueNotifier<double> currentSeconds = ValueNotifier(00);
+  ValueNotifier<double> currentMinutes = ValueNotifier(00);
+  ValueNotifier<double> currentHours = ValueNotifier(00);
 
   void startTimer() {
     
-    timerService.start(currentHours, currentMinutes, currentSeconds, (TimerValues currentValues) {
-      setState(() {
-        currentHours = currentValues.hours;
-        currentMinutes = currentValues.minutes;
-        currentSeconds =  currentValues.seconds;
-      });
+    timerService.start(selectedHours, selectedMinutes, selectedSeconds, (TimerValues currentValues) {
+      currentHours.value = currentValues.hours;
+      currentMinutes.value = currentValues.minutes;
+      currentSeconds.value =  currentValues.seconds;
     });
   }
 
-  void resetTimerAnimation(){
+  void playResetTimerAnimation(){
     //TODO: Redo this
+    /*
     double reductionPercentage = 0.008;
     Timer.periodic(const Duration(microseconds: 100), (timer) {
         if(currentHours <= 0 && currentMinutes <= 0 && currentSeconds <= 0){
@@ -90,8 +114,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
         currentMinutes = reduceByPercentageIfNotNull(currentMinutes, reductionPercentage);
         currentSeconds = reduceByPercentageIfNotNull(currentSeconds, reductionPercentage);
       });
-  });
+    });
+    */
+    initialSeconds = currentSeconds.value;
+    initialMinutes = currentMinutes.value;
+    initialHours = currentHours.value;
+
+    resetTimerController.reverse(from: 1.0);
+
+
   }
+
 
   double reduceByPercentageIfNotNull(double value, double percentage){
     return value - value*percentage >= 0 ? value - value*percentage : 0;
@@ -110,48 +143,63 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     return Center(
       child: Align(
         alignment: Alignment.center,
-        child: SleekCircularSlider(
-          initialValue: currentSeconds,
-          min: 0,
-          max: 60,
-          onChange: (double value)  {
-            currentSeconds = value;
-          },
-          appearance: slider_appearance01,
-          innerWidget: (double value){
-            return Align(
-              alignment: Alignment.center,
-              child: SleekCircularSlider(
-                initialValue: currentMinutes,
-                min: 0,
-                max: 60,
-                onChange: (double value) {
-                  currentMinutes = value;
-                },
-                appearance: slider_appearance02,
-                innerWidget: (double value) {
-                  return Align(
-                    alignment: Alignment.center,
-                    child: SleekCircularSlider(
-                      initialValue: currentHours,
-                      min: 0,
-                      max: 24,
-                      onChange: (double value) {
-                        currentHours = value;
-                      },
-                      appearance: slider_appearance03,
-                      innerWidget: (double value) {
-                        return Container(
-                        padding: EdgeInsets.all(18),
-                        child: detectStartTimer(),
+        child: ValueListenableBuilder(
+          valueListenable: currentSeconds,
+          builder: (context, currentSecondschanged, child) {
+          return SleekCircularSlider(
+            initialValue: currentSecondschanged,
+            min: 0,
+            max: 60,
+            onChange: (double value)  {
+              selectedSeconds = value;
+            },
+            appearance: slider_appearance01,
+            innerWidget: (double value){
+              return Align(
+                alignment: Alignment.center,
+                child: ValueListenableBuilder(
+                  valueListenable: currentMinutes,
+                  builder : (context, currentMinuteschanged, child) {
+                  return SleekCircularSlider(
+                    initialValue: currentMinuteschanged,
+                    min: 0,
+                    max: 60,
+                    onChange: (double value) {
+                      selectedMinutes = value;
+                    },
+                    appearance: slider_appearance02,
+                    innerWidget: (double value) {
+                      return Align(
+                        alignment: Alignment.center,
+                        child: ValueListenableBuilder(
+                          valueListenable: currentHours,
+                          builder: (context, currentHourschanged, child) {
+                            return SleekCircularSlider(
+                            initialValue: currentHourschanged,
+                            min: 0,
+                            max: 24,
+                            onChange: (double value) {
+                              selectedHours = value;
+                            },
+                            appearance: slider_appearance03,
+                            innerWidget: (double value) {
+                              return Container(
+                              padding: EdgeInsets.all(18),
+                              child: detectStartTimer(),
+                            );
+                            }
+                          );
+                        }
+                        ),
                       );
-                      }
-                    ),
+                    }
                   );
                 }
-              ),
-            );
-          }
+                ),
+              );
+            }
+          );
+        }
         ),
       )
     );
@@ -164,7 +212,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       if(timerService.isRunning()){
         fillController.reverse(from: fillValue.value);
       }
-      else{
+      else if(selectedHours > 0 || selectedMinutes > 0 || selectedSeconds > 0){
         fillController.forward(from: fillValue.value);
       }
     },
@@ -189,7 +237,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
           progressColor: customColors03.trackColor!,
           child: Center(
             child: Text(
-                '${currentHours.floor().toString().padLeft(2, '0')}:${currentMinutes.floor().toString().padLeft(2, '0')}:${currentSeconds.floor().toString().padLeft(2, '0')}',
+                '${selectedHours.floor().toString().padLeft(2, '0')}:${selectedMinutes.floor().toString().padLeft(2, '0')}:${selectedSeconds.floor().toString().padLeft(2, '0')}',
                 style: const TextStyle(
                   fontSize: 25,
                   color: Colors.black,
