@@ -16,21 +16,60 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   final CountdownTimerService timerService = CountdownTimerService();
 
-  ValueNotifier<double> fillValue = ValueNotifier(0); 
+  late AnimationController fillController;
+  late Animation<double> fillAnimation;
+
+  late AnimationController fillBackController;
+  late Animation<double> fillBackAnimation;
+
+  ValueNotifier<double> fillValue = ValueNotifier<double>(0.0);
+
+  @override
+  void initState() {
+    super.initState();
+    fillController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        if(!timerService.isRunning()){
+          startTimer();
+        }
+      }
+      else if(status == AnimationStatus.dismissed){
+        if(timerService.isRunning()){
+          timerService.cancel();
+          resetTimerAnimation();
+        }
+      }
+    });
+
+    fillAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(fillController)..addListener(() {
+      fillValue.value = fillAnimation.value;
+    });
+
+    fillBackController = AnimationController(
+      duration: const Duration(seconds: 4),
+      vsync: this,
+    );
+
+    fillBackAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(fillBackController)..addListener(() {
+      fillValue.value = fillBackAnimation.value;
+    });
+
+  }
+
 
   double currentSeconds = 00;
   double currentMinutes = 00;
   double currentHours = 00;
 
-  Timer? holdFillTimer;
-  Timer? fillBackTimer;
-
-  void startTimer(double hours, double minutes, double seconds) {
+  void startTimer() {
     
-    timerService.start(hours, minutes, seconds, (TimerValues currentValues) {
+    timerService.start(currentHours, currentMinutes, currentSeconds, (TimerValues currentValues) {
       setState(() {
         currentHours = currentValues.hours;
         currentMinutes = currentValues.minutes;
@@ -40,16 +79,22 @@ class _HomePageState extends State<HomePage> {
   }
 
   void resetTimerAnimation(){
+    //TODO: Redo this
+    double reductionPercentage = 0.008;
     Timer.periodic(const Duration(microseconds: 100), (timer) {
         if(currentHours <= 0 && currentMinutes <= 0 && currentSeconds <= 0){
           timer.cancel();
         }
         setState(() {
-        currentHours = currentHours - currentHours*0.01 >= 0 ? currentHours - currentHours*0.01 : 0;
-        currentMinutes = currentMinutes - currentMinutes*0.01 >= 0 ? currentMinutes - currentMinutes*0.01 : 0;
-        currentSeconds =  currentSeconds - currentSeconds*0.01 >= 0 ? currentSeconds - currentSeconds*0.01 : 0;
+        currentHours = reduceByPercentageIfNotNull(currentHours, reductionPercentage);
+        currentMinutes = reduceByPercentageIfNotNull(currentMinutes, reductionPercentage);
+        currentSeconds = reduceByPercentageIfNotNull(currentSeconds, reductionPercentage);
       });
   });
+  }
+
+  double reduceByPercentageIfNotNull(double value, double percentage){
+    return value - value*percentage >= 0 ? value - value*percentage : 0;
   }
 
 
@@ -114,35 +159,25 @@ class _HomePageState extends State<HomePage> {
   GestureDetector detectStartTimer() {
     return GestureDetector(
     onTapDown: (details) {
-      fillBackTimer?.cancel();
-      if(!timerService.isRunning()){
-        holdFillTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
-        if (fillValue.value < 1) {
-          fillValue.value += 0.01;
-        } else {
-          timer.cancel();
-          
-          startTimer(currentHours, currentMinutes, currentSeconds);
-        }
-        });
+      fillBackController.stop();
+      
+      if(timerService.isRunning()){
+        fillController.reverse(from: fillValue.value);
       }
       else{
-        holdFillTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
-        if (fillValue.value > 0) {
-          fillValue.value -= 0.01;
-        } else {
-          timer.cancel();
-          timerService.cancel();
-
-          resetTimerAnimation();
-        }
-        });
+        fillController.forward(from: fillValue.value);
       }
     },
     onTapUp: (details){
-      holdFillTimer?.cancel();
+      fillController.stop();
 
-      fillTimerAnimation();
+      if(timerService.isRunning()){
+        fillBackController.forward(from: fillValue.value);
+      }
+      else{
+        fillBackController.reverse(from: fillValue.value);
+      }
+      
     },
     child: ValueListenableBuilder(
       valueListenable: fillValue,
@@ -166,29 +201,6 @@ class _HomePageState extends State<HomePage> {
       }
     ),
             );
-  }
-
-  void fillTimerAnimation() {
-    fillBackTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
-      if(timerService.isRunning()){
-        if (fillValue.value < 1) {
-          fillValue.value += 0.005;
-        } 
-        else {
-          timer.cancel();
-        }
-      }
-      else{
-      if (fillValue.value > 0) {
-        fillValue.value -= 0.005;
-      } 
-      else {
-        timer.cancel();
-        timerService.cancel();
-      }
-        
-      }
-    });
   }
 
   @override
