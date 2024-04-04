@@ -1,8 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:async';
-import 'dart:ffi';
 
+import 'package:basic_timer_app/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -20,6 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   final CountdownTimerService timerService = CountdownTimerService();
+  bool _buttonClicked = false;
 
   late AnimationController fillController;
   late Animation<double> fillAnimation;
@@ -51,13 +51,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
         }
       }
     });
-    CurvedAnimation curveFillAnimation = CurvedAnimation(parent: fillController, curve: Curves.easeInOut);
+    CurvedAnimation curveFillAnimation = CurvedAnimation(parent: fillController, curve: Curves.easeOut);
     fillAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(curveFillAnimation)..addListener(() {
       fillValue.value = fillAnimation.value;
     });
 
     fillBackController = AnimationController(
-      duration: const Duration(seconds: 20),
+      duration: const Duration(seconds: 1),
       vsync: this,
     );
 
@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       vsync: this,
     );
 
-    CurvedAnimation curveResetTimerAnimation = CurvedAnimation(parent: resetTimerController, curve: Curves.easeInOut);
+    CurvedAnimation curveResetTimerAnimation = CurvedAnimation(parent: resetTimerController, curve: Curves.fastEaseInToSlowEaseOut);
     resetTimerAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(curveResetTimerAnimation)..addListener(() {
         currentSeconds.value = initialSeconds*(1-resetTimerAnimation.value);
         currentMinutes.value = initialMinutes*(1-resetTimerAnimation.value);
@@ -133,11 +133,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: timer(),
+      backgroundColor: HexColor('#FDFDF4'),
+      body: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          Align(
+            alignment: Alignment.center,
+            child: timer(), // Centered vertically in the stack.
+          ),
+          Positioned(
+            top: screenHeight / 2 + 250, // Adjust the value to position startButton() right below timer()
+            child: startContainer(),
+          ),
+        ],
+      ),
     );
   }
+
+
 
   Center timer() {
     return Center(
@@ -184,7 +199,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                             appearance: slider_appearance03,
                             innerWidget: (double value) {
                               return Container(
-                              padding: EdgeInsets.all(18),
+                              padding: EdgeInsets.all(35),
                               child: detectStartTimer(),
                             );
                             }
@@ -206,6 +221,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   }
   GestureDetector detectStartTimer() {
     return GestureDetector(
+
     onTapDown: (details) {
       fillBackController.stop();
       
@@ -232,8 +248,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       builder: (context, value, child) {
         return FillingContainer(
           progress: value,
-          size: 210,
-          backgroundColor: Colors.white,
+          size: 140,
+          backgroundColor: HexColor('#FDFDF4'),
           progressColor: customColors03.trackColor!,
           child: Center(
             child: Text(
@@ -251,11 +267,33 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
             );
   }
 
-  @override
-  void dispose() {
-    timerService.cancel();
-    super.dispose();
-  }
+  GestureDetector startContainer() {
+    return GestureDetector(
+      onTap:() {
+        setState(() {
+          _buttonClicked = !_buttonClicked;
+        });
+      },
+      child: AnimatedContainer(
+              duration: Duration(milliseconds: 500),
+              width: _buttonClicked ? 30.0 : 180.0,
+              height: _buttonClicked ? 30.0 : 70.0,
+              decoration: BoxDecoration(
+                color: HexColor('#F6A881'),
+                borderRadius: _buttonClicked ? BorderRadius.circular(35) : BorderRadius.circular(30),
+              ),
+              child: Center(
+                child: Text(
+                  _buttonClicked ? '' : 'Start',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+            ),
+    );
+}
 }
 
 
