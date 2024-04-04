@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     });
 
     fillBackController = AnimationController(
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 20),
       vsync: this,
     );
 
@@ -73,9 +73,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
 
     CurvedAnimation curveResetTimerAnimation = CurvedAnimation(parent: resetTimerController, curve: Curves.easeInOut);
     resetTimerAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(curveResetTimerAnimation)..addListener(() {
-        currentSeconds.value = initialSeconds*resetTimerAnimation.value;
-        currentMinutes.value = initialMinutes*resetTimerAnimation.value;
-        currentHours.value = initialHours*resetTimerAnimation.value;
+        currentSeconds.value = initialSeconds*(1-resetTimerAnimation.value);
+        currentMinutes.value = initialMinutes*(1-resetTimerAnimation.value);
+        currentHours.value = initialHours*(1-resetTimerAnimation.value);
     });
 
   }
@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     initialMinutes = currentMinutes.value;
     initialHours = currentHours.value;
 
-    resetTimerController.reverse(from: 1.0);
+    resetTimerController.forward(from: 0.0);
 
 
   }
