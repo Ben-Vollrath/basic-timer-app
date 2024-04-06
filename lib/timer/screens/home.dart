@@ -21,6 +21,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   final CountdownTimerService timerService = CountdownTimerService();
   bool _buttonClicked = false;
 
+  double selectedSeconds = 00;
+  double selectedMinutes = 00;
+  double selectedHours = 00;
+
+  ValueNotifier<double> currentSeconds = ValueNotifier(00);
+  ValueNotifier<double> currentMinutes = ValueNotifier(00);
+  ValueNotifier<double> currentHours = ValueNotifier(00);
+
   late AnimationController fillController;
   late Animation<double> fillAnimation;
 
@@ -73,18 +81,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     });
 
   }
-
-  double selectedSeconds = 00;
-  double selectedMinutes = 00;
-  double selectedHours = 00;
-
-  double initialSeconds = 00;
-  double initialMinutes = 00;
-  double initialHours = 00;
-
-  ValueNotifier<double> currentSeconds = ValueNotifier(00);
-  ValueNotifier<double> currentMinutes = ValueNotifier(00);
-  ValueNotifier<double> currentHours = ValueNotifier(00);
 
   void startTimer() {
     
