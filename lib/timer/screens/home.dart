@@ -3,12 +3,11 @@
 
 import 'package:basic_timer_app/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
-import 'package:basic_timer_app/services/countdown_timer_service.dart';
-import 'package:basic_timer_app/styling/slider_style.dart';
-import 'package:basic_timer_app/widgets/filling_container.dart';
+import 'package:basic_timer_app/timer/domain/services/countdown_timer_service.dart';
+import 'package:basic_timer_app/timer/widgets/slider_style.dart';
+import 'package:basic_timer_app/timer/widgets/filling_container.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

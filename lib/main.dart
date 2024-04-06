@@ -1,4 +1,4 @@
-import 'package:basic_timer_app/pages/home.dart';
+import 'package:basic_timer_app/timer/screens/home.dart';
 import 'package:flutter/material.dart';
 
 void main() {
