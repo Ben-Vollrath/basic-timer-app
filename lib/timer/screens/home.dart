@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 
+import 'package:basic_timer_app/timer/providers/reset_timer_animation.dart';
 import 'package:basic_timer_app/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -26,14 +27,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   late AnimationController fillBackController;
   late Animation<double> fillBackAnimation;
 
-  late AnimationController resetTimerController;
-  late Animation<double>resetTimerAnimation;
+  late ResetTimerAnimation resetTimerAnimation;
 
   ValueNotifier<double> fillValue = ValueNotifier<double>(0.0);
 
   @override
   void initState() {
     super.initState();
+    resetTimerAnimation = ResetTimerAnimation(
+      vsync: this, 
+      currentSeconds: currentSeconds, 
+      currentMinutes: currentMinutes, 
+      currentHours: currentHours
+      );
+
     fillController = AnimationController(
       duration: const Duration(milliseconds: 1250),
       vsync: this,
@@ -46,7 +53,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       else if(status == AnimationStatus.dismissed){
         if(timerService.isRunning()){
           timerService.cancel();
-          playResetTimerAnimation();
+          resetTimerAnimation.playAnimation();
         }
       }
     });
@@ -63,18 +70,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     CurvedAnimation curveFillBackAnimation = CurvedAnimation(parent: fillBackController, curve: Curves.easeInOut);
     fillBackAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(curveFillBackAnimation)..addListener(() {
       fillValue.value = fillBackAnimation.value;
-    });
-
-    resetTimerController = AnimationController(
-      duration: const Duration(milliseconds: 1250),
-      vsync: this,
-    );
-
-    CurvedAnimation curveResetTimerAnimation = CurvedAnimation(parent: resetTimerController, curve: Curves.fastEaseInToSlowEaseOut);
-    resetTimerAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(curveResetTimerAnimation)..addListener(() {
-        currentSeconds.value = initialSeconds*(1-resetTimerAnimation.value);
-        currentMinutes.value = initialMinutes*(1-resetTimerAnimation.value);
-        currentHours.value = initialHours*(1-resetTimerAnimation.value);
     });
 
   }
@@ -99,31 +94,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       currentSeconds.value =  currentValues.seconds;
     });
   }
-
-  void playResetTimerAnimation(){
-    //TODO: Redo this
-    /*
-    double reductionPercentage = 0.008;
-    Timer.periodic(const Duration(microseconds: 100), (timer) {
-        if(currentHours <= 0 && currentMinutes <= 0 && currentSeconds <= 0){
-          timer.cancel();
-        }
-        setState(() {
-        currentHours = reduceByPercentageIfNotNull(currentHours, reductionPercentage);
-        currentMinutes = reduceByPercentageIfNotNull(currentMinutes, reductionPercentage);
-        currentSeconds = reduceByPercentageIfNotNull(currentSeconds, reductionPercentage);
-      });
-    });
-    */
-    initialSeconds = currentSeconds.value;
-    initialMinutes = currentMinutes.value;
-    initialHours = currentHours.value;
-
-    resetTimerController.forward(from: 0.0);
-
-
-  }
-
 
   double reduceByPercentageIfNotNull(double value, double percentage){
     return value - value*percentage >= 0 ? value - value*percentage : 0;
