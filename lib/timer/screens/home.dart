@@ -49,6 +49,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       currentHours: currentHours
       );
 
+    //Remove this with new start animation
     fillController = AnimationController(
       duration: const Duration(milliseconds: 1250),
       vsync: this,
@@ -82,6 +83,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
 
   }
 
+
   void startTimer() {
     
     timerService.start(selectedHours, selectedMinutes, selectedSeconds, (TimerValues currentValues) {
@@ -90,11 +92,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       currentSeconds.value =  currentValues.seconds;
     });
   }
-
-  double reduceByPercentageIfNotNull(double value, double percentage){
-    return value - value*percentage >= 0 ? value - value*percentage : 0;
-  }
-
 
   @override
   Widget build(BuildContext context) {
