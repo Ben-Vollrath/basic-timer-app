@@ -6,6 +6,7 @@ import 'package:basic_timer_app/timer/domain/services/countdown_timer_service.da
 import 'package:basic_timer_app/timer/widgets/slider_style.dart';
 import 'package:basic_timer_app/timer/widgets/filling_container.dart';
 import 'package:basic_timer_app/timer/providers/reset_timer_animation.dart';
+import 'package:basic_timer_app/timer/widgets/animated_start_button.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -104,14 +105,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
           ),
           Positioned(
             top: screenHeight / 2 + 250, // Adjust the value to position startButton() right below timer()
-            child: startContainer(),
+            child: AnimatedStartButton(),
           ),
         ],
       ),
     );
   }
-
-
 
   Center timer() {
     return Center(
@@ -225,34 +224,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     ),
             );
   }
-
-  GestureDetector startContainer() {
-    return GestureDetector(
-      onTap:() {
-        setState(() {
-          _buttonClicked = !_buttonClicked;
-        });
-      },
-      child: AnimatedContainer(
-              duration: Duration(milliseconds: 500),
-              width: _buttonClicked ? 30.0 : 180.0,
-              height: _buttonClicked ? 30.0 : 70.0,
-              decoration: BoxDecoration(
-                color: HexColor('#F6A881'),
-                borderRadius: _buttonClicked ? BorderRadius.circular(35) : BorderRadius.circular(30),
-              ),
-              child: Center(
-                child: Text(
-                  _buttonClicked ? '' : 'Start',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-            ),
-    );
-}
 }
 
 
