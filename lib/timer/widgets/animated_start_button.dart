@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:basic_timer_app/utils.dart';
 
-
 class AnimatedStartButton extends StatefulWidget {
   bool buttonClicked = false;
+  final VoidCallback onTapStart; 
 
   AnimatedStartButton({
     super.key,
+    required this.onTapStart, // Initialize the callback here
   });
 
   @override
@@ -17,10 +18,11 @@ class _AnimatedStartButtonState extends State<AnimatedStartButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap:() {
+      onTap: () {
         setState(() {
           widget.buttonClicked = !widget.buttonClicked;
         });
+        widget.onTapStart(); // Call the callback here
       },
       child: AnimatedContainer(
         duration: Duration(milliseconds: 500),

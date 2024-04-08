@@ -105,7 +105,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
           ),
           Positioned(
             top: screenHeight / 2 + 250, // Adjust the value to position startButton() right below timer()
-            child: AnimatedStartButton(),
+            child: AnimatedStartButton(
+              onTapStart: startTimer,
+            ),
           ),
         ],
       ),
