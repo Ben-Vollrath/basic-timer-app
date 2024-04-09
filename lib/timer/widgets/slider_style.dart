@@ -1,3 +1,4 @@
+import 'package:basic_timer_app/static/colors.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:basic_timer_app/utils.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,7 @@ final customWidth01 =
 final customColors01 = CustomSliderColors(
     dotColor: Colors.white.withOpacity(0.8),
     trackColor: HexColor('#FFD4BE').withOpacity(0.4),
-    progressBarColor: HexColor('#F6A881'),
+    progressBarColor: AppColors.mainOrange,
     shadowColor: HexColor('#FFD4BE'),
     shadowStep: 10.0,
     shadowMaxOpacity: 0.6);
@@ -25,7 +26,7 @@ final customWidth02 =
 final customColors02 = CustomSliderColors(
     dotColor: Colors.white.withOpacity(0.8),
     trackColor: HexColor('#98DBFC').withOpacity(0.3),
-    progressBarColor: HexColor('#6DCFFF'),
+    progressBarColor: AppColors.mainBlue,
     shadowColor: HexColor('#98DBFC'),
     shadowStep: 15.0,
     shadowMaxOpacity: 0.3);
@@ -43,7 +44,7 @@ final customWidth03 =
 final customColors03 = CustomSliderColors(
     dotColor: Colors.white.withOpacity(0.8),
     trackColor: HexColor('#EFC8FC').withOpacity(0.3),
-    progressBarColor: HexColor('#A177B0'),
+    progressBarColor: AppColors.mainPurple,
     shadowColor: HexColor('#EFC8FC'),
     shadowStep: 20.0,
     shadowMaxOpacity: 0.3);

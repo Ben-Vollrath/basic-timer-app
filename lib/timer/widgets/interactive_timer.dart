@@ -1,3 +1,4 @@
+import 'package:basic_timer_app/static/colors.dart';
 import 'package:basic_timer_app/timer/widgets/filling_container.dart';
 import 'package:flutter/material.dart';
 
@@ -148,7 +149,7 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
         width: buttonClicked ? 30.0 : 180.0,
         height: buttonClicked ? 30.0 : 70.0,
         decoration: BoxDecoration(
-          color: HexColor('#F6A881'),
+          color: AppColors.mainOrange,
           borderRadius: buttonClicked ? BorderRadius.circular(35) : BorderRadius.circular(30),
         ),
         child: Center(
@@ -167,7 +168,7 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
   return FillingContainer(
     progress: 0,
     size: 140,
-    backgroundColor: HexColor('#FDFDF4'),
+    backgroundColor: AppColors.backgroundWhite,
     progressColor: customColors03.trackColor!,
     child: Center(
       child: Text(
