@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:basic_timer_app/utils.dart';
 import 'package:basic_timer_app/timer/widgets/interactive_timer.dart';
 import 'package:basic_timer_app/static/colors.dart';
 
