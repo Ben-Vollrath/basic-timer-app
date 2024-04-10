@@ -154,8 +154,8 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
         child: Center(
           child: Text(
             buttonClicked ? '' : 'Start',
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: AppColors.backgroundWhite,
               fontSize: 20,
             ),
           ),
