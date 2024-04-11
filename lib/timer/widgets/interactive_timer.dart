@@ -201,7 +201,7 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
             color: AppColors.black, 
             width: 3
           ),
-            color: AppColors.mainOrange.withOpacity(1 - value as double), //change color
+            color: AppColors.red.withOpacity(1 - value as double), //change color
         ),
       child: Center(
         child: Text(

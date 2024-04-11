@@ -7,4 +7,6 @@ class AppColors {
   static var mainBlue = HexColor('#6DCFFF');
   static var mainPurple = HexColor('#A177B0');
   static var black = Colors.black;
+
+  static var red = HexColor('#FF8585');
 }
