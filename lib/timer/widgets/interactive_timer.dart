@@ -159,8 +159,7 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
           buttonClicked = !buttonClicked;
         });
         startTimer();
-        startimerButtonAnimation.moveUpController.forward();
-        //TODO add stop timer functionality
+        startimerButtonAnimation.moveUpController.forward(from: 0);
       },
       child: ValueListenableBuilder(
         valueListenable: buttonOpacity,
@@ -190,31 +189,41 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
       ),
     );
   }
-  ValueListenableBuilder showTime(){
-  return ValueListenableBuilder(
-    valueListenable: buttonOpacity,
-    builder: (context, value, child) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(140),
-          border: Border.all(
-            color: AppColors.black, 
-            width: 3
-          ),
-            color: AppColors.red.withOpacity(1 - value as double), //change color
-        ),
-      child: Center(
-        child: Text(
-            '${selectedHours.floor().toString().padLeft(2, '0')}:${selectedMinutes.floor().toString().padLeft(2, '0')}:${selectedSeconds.floor().toString().padLeft(2, '0')}',
-            style: const TextStyle(
-              fontSize: 25,
-              color: Colors.black,
+  GestureDetector showTime(){
+  return GestureDetector(
+    onTap: () {
+      timerService.cancel();
+      resetTimerAnimation.playAnimation();
+      startimerButtonAnimation.fadeController.reverse();
+      buttonClicked = false;
+    },
+    child: ValueListenableBuilder(
+      valueListenable: buttonOpacity,
+      builder: (context, value, child) {
+      return Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(140),
+            border: Border.all(
+              color: AppColors.black, 
+              width: 3
             ),
-          textAlign: TextAlign.center,
+              color: AppColors.red.withOpacity(1 - value as double), //change color
+          ),
+        child: Center(
+          child: Text(
+              '${selectedHours.floor().toString().padLeft(2, '0')}:${selectedMinutes.floor().toString().padLeft(2, '0')}:${selectedSeconds.floor().toString().padLeft(2, '0')}',
+              style: const TextStyle(
+                fontSize: 25,
+                color: Colors.black,
+              ),
+            textAlign: TextAlign.center,
+          ),
         ),
-      ),
-    );
-  },
+      );
+    },
+    ),
   );
   }
+
+
 }

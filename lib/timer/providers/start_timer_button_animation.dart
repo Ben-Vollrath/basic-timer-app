@@ -18,7 +18,7 @@ class startTimerButtonAnimation{
     required this.opacity,
   }) {
     moveUpController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 1500),
       vsync: vsync,
     );
 
@@ -27,7 +27,7 @@ class startTimerButtonAnimation{
       curve: Curves.fastEaseInToSlowEaseOut,
     );
 
-    moveUpAnimation = Tween<double>(begin: 250.00, end: -15.00).animate(curve)
+    moveUpAnimation = Tween<double>(begin: 250.0, end: -15.00).animate(curve)
       ..addListener(
         () => startButtonHeight.value = moveUpAnimation.value,
       );
@@ -60,6 +60,7 @@ class startTimerButtonAnimation{
 
     fadeAnimation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
+        startButtonHeight.value = 250.00; //reset the height
       }
     });
 
