@@ -26,20 +26,21 @@ class CountdownTimerService {
       Duration(milliseconds: 10),
       (Timer timer) {
         
-        if (hours <= 0 && minutes <= 0 && seconds <= 0) {
+        if (hours <= 0 && minutes <= 0 && seconds < 0.01) {
+          onTick(TimerValues(0, 0, 0));
           timer.cancel();
         } else {
           if(seconds - 0.01 >= 0){
             seconds -= 0.01;
           }
           else{
-            seconds = 60.00;
             if(minutes - 1 >= 0){
+              seconds = 60.00;
               minutes -= 1;
             }
             else{
-              minutes = 60;
               if(hours - 1 >= 0){
+                minutes = 60;
                 hours -= 1;
               }
               else{
@@ -57,6 +58,7 @@ class CountdownTimerService {
 
   void cancel() {
     _timer.cancel();
+
   }
 
 

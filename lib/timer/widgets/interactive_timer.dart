@@ -82,6 +82,9 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
       currentHours.value = currentValues.hours;
       currentMinutes.value = currentValues.minutes;
       currentSeconds.value =  currentValues.seconds;
+      if(currentValues.hours == 0 && currentValues.minutes == 0 && currentValues.seconds == 0){
+        cancelOrEndTimer();
+      }
     });
   }
 
@@ -192,10 +195,7 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
   GestureDetector showTime(){
   return GestureDetector(
     onTap: () {
-      timerService.cancel();
-      resetTimerAnimation.playAnimation();
-      startimerButtonAnimation.fadeController.reverse();
-      buttonClicked = false;
+      cancelOrEndTimer();
     },
     child: ValueListenableBuilder(
       valueListenable: buttonOpacity,
@@ -225,5 +225,10 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
   );
   }
 
-
+  void cancelOrEndTimer(){
+      timerService.cancel();
+      resetTimerAnimation.playAnimation();
+      startimerButtonAnimation.fadeController.reverse();
+      buttonClicked = false;
+  }
 }
