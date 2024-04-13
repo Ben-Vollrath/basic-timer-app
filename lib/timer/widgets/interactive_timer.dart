@@ -26,8 +26,8 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
   ValueNotifier<double> buttonOpacity = ValueNotifier(1.0);
 
 
-  double selectedMinutes = 00;
-  ValueNotifier<double> currentMinutes = ValueNotifier(00);
+  double selectedSeconds = 00;
+  ValueNotifier<double> currentSeconds = ValueNotifier(00);
 
 
   late ResetTimerAnimation resetTimerAnimation;
@@ -61,7 +61,7 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
     super.initState();
     resetTimerAnimation = ResetTimerAnimation(
       vsync: this, 
-      currentMinutes: currentMinutes, 
+      currentSeconds: currentSeconds, 
       );
 
     startimerButtonAnimation = startTimerButtonAnimation(
@@ -72,14 +72,14 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
   }
 
   void startTimer() {
-    
-    timerService.start(selectedMinutes, (Duration timeLeft) {
+    Duration timerDuration = Duration(seconds: selectedSeconds.toInt());
+    timerService.start(timerDuration, (Duration timeLeft) {
       if(timeLeft.isNegative){
         cancelOrEndTimer();
-        currentMinutes.value = 0;
+        currentSeconds.value = 0;
       }
       else{
-        currentMinutes.value = timeLeft;
+        currentSeconds.value = timeLeft.inSeconds.toDouble();
       }
     });
   }
@@ -88,14 +88,14 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
   Center timer() {
     return Center(
       child: ValueListenableBuilder(
-        valueListenable: currentMinutes,
-        builder: (context, currentMinutesChanged, child) {
+        valueListenable: currentSeconds,
+        builder: (context, value, child) {
           return SleekCircularSlider(
-            initialValue: currentMinutesChanged,
+            initialValue: value,
             min: 0,
-            max: 60,
+            max: 3600,
             onChange: (double value) {
-              selectedMinutes = value;
+              selectedSeconds = value;
             },
             appearance: slider_appearance,
             innerWidget: (double value) {
@@ -166,7 +166,7 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
           ),
         child: Center(
           child: Text(
-              '00:${selectedMinutes.floor().toString().padLeft(2, '0')}:00',
+              '00:${(selectedSeconds ~/ 60 ).toString().padLeft(2, '0')}:${selectedSeconds.remainder(60).round().toString().padLeft(2, '0')}',
               style: const TextStyle(
                 fontSize: 25,
                 color: Colors.black,

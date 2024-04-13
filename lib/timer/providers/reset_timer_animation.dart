@@ -5,14 +5,14 @@ class ResetTimerAnimation {
   late Animation<double> animation;
   
   // References to the ValueNotifiers passed in through the constructor
-  ValueNotifier<double> currentMinutes;
+  ValueNotifier<double> currentSeconds;
 
   // Initial values to be captured when the animation starts
   late double initialMinutesValue;
 
   ResetTimerAnimation({
     required TickerProvider vsync,
-    required this.currentMinutes,
+    required this.currentSeconds,
   }) {
     controller = AnimationController(
       duration: const Duration(milliseconds: 1250),
@@ -29,11 +29,11 @@ class ResetTimerAnimation {
   }
 
   void captureInitialValues() {
-    initialMinutesValue = currentMinutes.value;
+    initialMinutesValue = currentSeconds.value;
   }
 
   void updateValues() {
-    currentMinutes.value = initialMinutesValue * (1 - animation.value);
+    currentSeconds.value = initialMinutesValue * (1 - animation.value);
   }
 
   void playAnimation() {
