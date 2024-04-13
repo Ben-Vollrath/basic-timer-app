@@ -91,67 +91,26 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
   
   Center timer() {
     return Center(
-      child: Align(
-        alignment: Alignment.center,
-        child: ValueListenableBuilder(
-          valueListenable: currentSeconds,
-          builder: (context, currentSecondschanged, child) {
+      child: ValueListenableBuilder(
+        valueListenable: currentMinutes,
+        builder: (context, currentHourschanged, child) {
           return SleekCircularSlider(
-            initialValue: currentSecondschanged,
+            initialValue: currentHourschanged,
             min: 0,
             max: 60,
-            onChange: (double value)  {
-              selectedSeconds = value;
+            onChange: (double value) {
+              selectedMinutes = value;
             },
-            appearance: slider_appearance01,
-            innerWidget: (double value){
-              return Align(
-                alignment: Alignment.center,
-                child: ValueListenableBuilder(
-                  valueListenable: currentMinutes,
-                  builder : (context, currentMinuteschanged, child) {
-                  return SleekCircularSlider(
-                    initialValue: currentMinuteschanged,
-                    min: 0,
-                    max: 60,
-                    onChange: (double value) {
-                      selectedMinutes = value;
-                    },
-                    appearance: slider_appearance02,
-                    innerWidget: (double value) {
-                      return Align(
-                        alignment: Alignment.center,
-                        child: ValueListenableBuilder(
-                          valueListenable: currentHours,
-                          builder: (context, currentHourschanged, child) {
-                            return SleekCircularSlider(
-                            initialValue: currentHourschanged,
-                            min: 0,
-                            max: 24,
-                            onChange: (double value) {
-                              selectedHours = value;
-                            },
-                            appearance: slider_appearance03,
-                            innerWidget: (double value) {
-                              return Container(
-                              padding: EdgeInsets.all(35),
-                              child: showTime(),
-                            );
-                            }
-                          );
-                        }
-                        ),
-                      );
-                    }
-                  );
-                }
-                ),
-              );
+            appearance: slider_appearance,
+            innerWidget: (double value) {
+              return Container(
+              padding: EdgeInsets.all(60),
+              child: showTime(),
+            );
             }
           );
         }
-        ),
-      )
+    )
     );
   }
 
