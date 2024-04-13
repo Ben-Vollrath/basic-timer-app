@@ -25,13 +25,10 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
   ValueNotifier<double> startButtonHeight = ValueNotifier(250.00);
   ValueNotifier<double> buttonOpacity = ValueNotifier(1.0);
 
-  double selectedSeconds = 00;
-  double selectedMinutes = 00;
-  double selectedHours = 00;
 
-  ValueNotifier<double> currentSeconds = ValueNotifier(00);
+  double selectedMinutes = 00;
   ValueNotifier<double> currentMinutes = ValueNotifier(00);
-  ValueNotifier<double> currentHours = ValueNotifier(00);
+
 
   late ResetTimerAnimation resetTimerAnimation;
   late startTimerButtonAnimation startimerButtonAnimation;
@@ -64,9 +61,7 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
     super.initState();
     resetTimerAnimation = ResetTimerAnimation(
       vsync: this, 
-      currentSeconds: currentSeconds, 
       currentMinutes: currentMinutes, 
-      currentHours: currentHours
       );
 
     startimerButtonAnimation = startTimerButtonAnimation(
@@ -78,12 +73,13 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
 
   void startTimer() {
     
-    timerService.start(selectedHours, selectedMinutes, selectedSeconds, (TimerValues currentValues) {
-      currentHours.value = currentValues.hours;
-      currentMinutes.value = currentValues.minutes;
-      currentSeconds.value =  currentValues.seconds;
-      if(currentValues.hours == 0 && currentValues.minutes == 0 && currentValues.seconds == 0){
+    timerService.start(selectedMinutes, (Duration timeLeft) {
+      if(timeLeft.isNegative){
         cancelOrEndTimer();
+        currentMinutes.value = 0;
+      }
+      else{
+        currentMinutes.value = timeLeft;
       }
     });
   }
@@ -91,67 +87,26 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
   
   Center timer() {
     return Center(
-      child: Align(
-        alignment: Alignment.center,
-        child: ValueListenableBuilder(
-          valueListenable: currentSeconds,
-          builder: (context, currentSecondschanged, child) {
+      child: ValueListenableBuilder(
+        valueListenable: currentMinutes,
+        builder: (context, currentMinutesChanged, child) {
           return SleekCircularSlider(
-            initialValue: currentSecondschanged,
+            initialValue: currentMinutesChanged,
             min: 0,
             max: 60,
-            onChange: (double value)  {
-              selectedSeconds = value;
+            onChange: (double value) {
+              selectedMinutes = value;
             },
-            appearance: slider_appearance01,
-            innerWidget: (double value){
-              return Align(
-                alignment: Alignment.center,
-                child: ValueListenableBuilder(
-                  valueListenable: currentMinutes,
-                  builder : (context, currentMinuteschanged, child) {
-                  return SleekCircularSlider(
-                    initialValue: currentMinuteschanged,
-                    min: 0,
-                    max: 60,
-                    onChange: (double value) {
-                      selectedMinutes = value;
-                    },
-                    appearance: slider_appearance02,
-                    innerWidget: (double value) {
-                      return Align(
-                        alignment: Alignment.center,
-                        child: ValueListenableBuilder(
-                          valueListenable: currentHours,
-                          builder: (context, currentHourschanged, child) {
-                            return SleekCircularSlider(
-                            initialValue: currentHourschanged,
-                            min: 0,
-                            max: 24,
-                            onChange: (double value) {
-                              selectedHours = value;
-                            },
-                            appearance: slider_appearance03,
-                            innerWidget: (double value) {
-                              return Container(
-                              padding: EdgeInsets.all(35),
-                              child: showTime(),
-                            );
-                            }
-                          );
-                        }
-                        ),
-                      );
-                    }
-                  );
-                }
-                ),
-              );
+            appearance: slider_appearance,
+            innerWidget: (double value) {
+              return Container(
+              padding: EdgeInsets.all(60),
+              child: showTime(),
+            );
             }
           );
         }
-        ),
-      )
+    )
     );
   }
 
@@ -211,7 +166,7 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
           ),
         child: Center(
           child: Text(
-              '${selectedHours.floor().toString().padLeft(2, '0')}:${selectedMinutes.floor().toString().padLeft(2, '0')}:${selectedSeconds.floor().toString().padLeft(2, '0')}',
+              '00:${selectedMinutes.floor().toString().padLeft(2, '0')}:00',
               style: const TextStyle(
                 fontSize: 25,
                 color: Colors.black,
