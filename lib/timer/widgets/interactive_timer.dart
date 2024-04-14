@@ -79,7 +79,7 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
             initialValue: value,
             min: 0,
             max: 3600,
-            onChange: (double value) {
+            onChange: timerService.isRunning() ? null : (double value) {
               selectedSeconds = value;
             },
             appearance: slider_appearance,
@@ -144,7 +144,7 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
       ),
     child: Center(
       child: Text(
-          '00:${(selectedSeconds ~/ 60 ).toString().padLeft(2, '0')}:${selectedSeconds.remainder(60).round().toString().padLeft(2, '0')}',
+          '00:${( (timerService.isRunning() ? currentSeconds.value : selectedSeconds) ~/ 60 ).toString().padLeft(2, '0')}:${(timerService.isRunning() ? currentSeconds.value : selectedSeconds).remainder(60).round().toString().padLeft(2, '0')}',
           style: const TextStyle(
             fontSize: 35,
             color: Colors.black,
@@ -159,5 +159,12 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
       timerService.cancel();
       resetTimerAnimation.playAnimation();
       buttonClicked.value = false;
+  }
+
+  @override
+  void dispose() {
+    timerService.cancel();
+    resetTimerAnimation.dispose();
+    super.dispose();
   }
 }

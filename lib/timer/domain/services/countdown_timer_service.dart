@@ -9,6 +9,7 @@ class CountdownTimerService {
       : _current = 0,
         _timer = Timer(Duration.zero, () {}) {
     _timer = Timer(Duration.zero, () {});
+    _timer.cancel();
   }
 
 
