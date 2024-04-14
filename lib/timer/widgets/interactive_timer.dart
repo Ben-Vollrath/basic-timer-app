@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
-import 'package:basic_timer_app/static/colors.dart';
+import 'package:basic_timer_app/static/style.dart';
 import 'package:basic_timer_app/timer/widgets/filling_container.dart';
 import 'package:basic_timer_app/timer/domain/services/countdown_timer_service.dart';
 import 'package:flutter/widgets.dart';
@@ -99,9 +99,9 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
     return Container(
       width: 150,
       height: 50,
-      child: TextButton(
+      child: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(AppColors.mainBlue),
+          backgroundColor: MaterialStateProperty.all(AppColors.primaryColor),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
@@ -118,17 +118,19 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
           }
           buttonClicked.value = !buttonClicked.value;
         },
-        child: ValueListenableBuilder(
-          valueListenable: buttonClicked,
-          builder: (context, value, child){
-          return Text(
-            value ? 'Cancel' : 'Start',
-            style: TextStyle(
-              color: AppColors.backgroundWhite,
-              fontSize: 20,
-            ),
-          );
-        }
+        child: Center(
+          child: ValueListenableBuilder(
+            valueListenable: buttonClicked,
+            builder: (context, value, child){
+            return Text(
+              value ? 'Cancel' : 'Start',
+              style: TextStyle(
+                color: AppColors.backGround,
+                fontSize: 30,
+              ),
+            );
+          }
+          ),
         ),
       ),
     );
@@ -138,16 +140,16 @@ class _InteractiveTimerState extends State<InteractiveTimer> with TickerProvider
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(140),
         border: Border.all(
-          color: AppColors.backgroundWhite, 
+          color: AppColors.backGround, 
           width: 3
         ),
       ),
     child: Center(
       child: Text(
           '00:${( (timerService.isRunning() ? currentSeconds.value : selectedSeconds) ~/ 60 ).toString().padLeft(2, '0')}:${(timerService.isRunning() ? currentSeconds.value : selectedSeconds).remainder(60).round().toString().padLeft(2, '0')}',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 35,
-            color: Colors.black,
+            color: AppColors.textStrong,
           ),
         textAlign: TextAlign.center,
       ),

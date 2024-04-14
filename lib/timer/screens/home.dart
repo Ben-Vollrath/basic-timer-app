@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:basic_timer_app/timer/widgets/interactive_timer.dart';
-import 'package:basic_timer_app/static/colors.dart';
+import 'package:basic_timer_app/static/style.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,7 +14,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundWhite,
+      backgroundColor: AppColors.backGround,
       body: const InteractiveTimer(),
     );
   }
