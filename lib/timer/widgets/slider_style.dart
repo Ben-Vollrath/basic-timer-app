@@ -4,12 +4,12 @@ import 'package:basic_timer_app/utils.dart';
 import 'package:flutter/material.dart';
 
 final customWidth =
-    CustomSliderWidths(trackWidth: 5, progressBarWidth: 15, shadowWidth: 30);
+    CustomSliderWidths(trackWidth: 5, progressBarWidth: 20, shadowWidth: 30);
 final customColors = CustomSliderColors(
     dotColor: Colors.white.withOpacity(0.8),
-    trackColor: HexColor('#98DBFC').withOpacity(0.3),
+    trackColor: AppColors.mainBlue.withOpacity(0.3),
     progressBarColor: AppColors.mainBlue,
-    shadowColor: HexColor('#98DBFC'),
+    shadowColor: AppColors.backgroundWhite,
     shadowStep: 15.0,
     shadowMaxOpacity: 0.3);
 
@@ -19,4 +19,4 @@ final CircularSliderAppearance slider_appearance = CircularSliderAppearance(
     animationEnabled: false,
     startAngle: 270,
     angleRange: 360,
-    size: 290.0,);
+    size: 325.0,);

@@ -10,15 +10,15 @@ void main() {
     });
 
     test('counts down correctly', () async {
-      service.start(0, 0, 1, (values) {
-        expect(values.seconds, lessThanOrEqualTo(1));
+      service.start(Duration(seconds: 1), (values) {
+        expect(values.inSeconds, lessThanOrEqualTo(1));
       });
       await Future.delayed(Duration(seconds: 2));
       expect(service.isRunning(), isFalse);
     });
 
     test('cancels correctly', () async {
-      service.start(0, 0, 10, (values) {});
+      service.start(Duration(seconds: 10), (values) {});
       await Future.delayed(Duration(milliseconds: 500));
       service.cancel();
       expect(service.isRunning(), isFalse);
