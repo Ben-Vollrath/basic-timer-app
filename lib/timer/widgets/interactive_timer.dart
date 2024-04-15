@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
 import 'package:basic_timer_app/static/style.dart';
-import 'package:basic_timer_app/timer/widgets/filling_container.dart';
 import 'package:basic_timer_app/timer/domain/services/countdown_timer_service.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
